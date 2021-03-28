@@ -81,9 +81,9 @@ const parseBuffer = exports.parseBuffer = function (buffer) {
     console.log("offsetTableOffset: " + offsetTableOffset);
   }
 
-  if (numObjects > exports.maxObjectCount) {
-    throw new Error("maxObjectCount exceeded");
-  }
+  // if (numObjects > exports.maxObjectCount) {
+  //   throw new Error("maxObjectCount exceeded");
+  // }
 
   // Handle offset table
   const offsetTable = [];
@@ -163,7 +163,7 @@ const parseBuffer = exports.parseBuffer = function (buffer) {
 
     function parseInteger() {
       const length = Math.pow(2, objInfo);
-      if (length < exports.maxObjectSize) {
+      // if (length < exports.maxObjectSize) {
         const data = buffer.slice(offset + 1, offset + 1 + length);
         if (length === 16) {
           const str = bufferToHexString(data);
@@ -174,22 +174,22 @@ const parseBuffer = exports.parseBuffer = function (buffer) {
           acc |= curr & 255;
           return acc;
         });
-      } else {
-        throw new Error("Too little heap space available! Wanted to read " + length + " bytes, but only " + exports.maxObjectSize + " are available.");
-      }
+      // } else {
+      //  throw new Error("Too little heap space available! Wanted to read " + length + " bytes, but only " + exports.maxObjectSize + " are available.");
+      // }
     }
 
     function parseUID() {
       const length = objInfo + 1;
-      if (length < exports.maxObjectSize) {
+      // if (length < exports.maxObjectSize) {
         return new UID(readUInt(buffer.slice(offset + 1, offset + 1 + length)));
-      }
-      throw new Error("Too little heap space available! Wanted to read " + length + " bytes, but only " + exports.maxObjectSize + " are available.");
+      // }
+      // throw new Error("Too little heap space available! Wanted to read " + length + " bytes, but only " + exports.maxObjectSize + " are available.");
     }
 
     function parseReal() {
       const length = Math.pow(2, objInfo);
-      if (length < exports.maxObjectSize) {
+      // if (length < exports.maxObjectSize) {
         const realBuffer = buffer.slice(offset + 1, offset + 1 + length);
         if (length === 4) {
           return realBuffer.readFloatBE(0);
@@ -197,9 +197,9 @@ const parseBuffer = exports.parseBuffer = function (buffer) {
         if (length === 8) {
           return realBuffer.readDoubleBE(0);
         }
-      } else {
-        throw new Error("Too little heap space available! Wanted to read " + length + " bytes, but only " + exports.maxObjectSize + " are available.");
-      }
+      // } else {
+      //  throw new Error("Too little heap space available! Wanted to read " + length + " bytes, but only " + exports.maxObjectSize + " are available.");
+      // }
     }
 
     function parseDate() {
@@ -228,10 +228,10 @@ const parseBuffer = exports.parseBuffer = function (buffer) {
           length = readUInt(buffer.slice(offset + 2, offset + 2 + intLength));
         }
       }
-      if (length < exports.maxObjectSize) {
-        return buffer.slice(offset + dataoffset, offset + dataoffset + length);
-      }
-      throw new Error("Too little heap space available! Wanted to read " + length + " bytes, but only " + exports.maxObjectSize + " are available.");
+      // if (length < exports.maxObjectSize) {
+      //   return buffer.slice(offset + dataoffset, offset + dataoffset + length);
+      // }
+      // throw new Error("Too little heap space available! Wanted to read " + length + " bytes, but only " + exports.maxObjectSize + " are available.");
     }
 
     function parsePlistString (isUtf16) {
@@ -256,15 +256,15 @@ const parseBuffer = exports.parseBuffer = function (buffer) {
       }
       // length is String length -> to get byte length multiply by 2, as 1 character takes 2 bytes in UTF-16
       length *= (isUtf16 + 1);
-      if (length < exports.maxObjectSize) {
+      // if (length < exports.maxObjectSize) {
         let plistString = Buffer.from(buffer.slice(offset + stroffset, offset + stroffset + length));
         if (isUtf16) {
           plistString = swapBytes(plistString);
           enc = "ucs2";
         }
         return plistString.toString(enc);
-      }
-      throw new Error("Too little heap space available! Wanted to read " + length + " bytes, but only " + exports.maxObjectSize + " are available.");
+      // }
+      // throw new Error("Too little heap space available! Wanted to read " + length + " bytes, but only " + exports.maxObjectSize + " are available.");
     }
 
     function parseArray() {
@@ -285,9 +285,9 @@ const parseBuffer = exports.parseBuffer = function (buffer) {
           length = readUInt(buffer.slice(offset + 2, offset + 2 + intLength));
         }
       }
-      if (length * objectRefSize > exports.maxObjectSize) {
-        throw new Error("Too little heap space available!");
-      }
+      // if (length * objectRefSize > exports.maxObjectSize) {
+      //   throw new Error("Too little heap space available!");
+      // }
       const array = [];
       for (let i = 0; i < length; i++) {
         const objRef = readUInt(buffer.slice(offset + arrayoffset + i * objectRefSize, offset + arrayoffset + (i + 1) * objectRefSize));
@@ -314,9 +314,9 @@ const parseBuffer = exports.parseBuffer = function (buffer) {
           length = readUInt(buffer.slice(offset + 2, offset + 2 + intLength));
         }
       }
-      if (length * 2 * objectRefSize > exports.maxObjectSize) {
-        throw new Error("Too little heap space available!");
-      }
+      // if (length * 2 * objectRefSize > exports.maxObjectSize) {
+      //   throw new Error("Too little heap space available!");
+      // }
       if (debug) {
         console.log("Parsing dictionary #" + tableOffset);
       }
